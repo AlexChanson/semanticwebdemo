@@ -1,5 +1,5 @@
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,10 +11,31 @@ public class Main {
 
     public static void main(String[] args) throws Exception{
 
-        Model model = ModelFactory.createDefaultModel();
+        Model data = ModelFactory.createDefaultModel();
         InputStream in = new FileInputStream(new File(ressourceFolder + "qalm.rdf"));
-        model.read(in, "RDF/XML");
+        data.read(in, "RDF/XML");
+
+        Model schema = ModelFactory.createDefaultModel();
+        in = new FileInputStream(new File(ressourceFolder + "MerchantSiteOntology.rdfs"));
+        schema.read(in, "RDFS/XML");
+
+        Model infered = inferStuff(schema, data);
+
+        String queryString = " select * where {?x ?y ?Z} " ;
+        Query query = QueryFactory.create(queryString) ;
+        try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
+            ResultSet results = qexec.execSelect() ;
+            for ( int i = 0; results.hasNext() && i < 10; ++i)
+            {
+                QuerySolution soln = results.nextSolution() ;
+                RDFNode x = soln.get("varName") ;       // Get a result variable by name.
+                Resource r = soln.getResource("VarR") ; // Get a result variable - must be a resource
+                Literal l = soln.getLiteral("VarL") ;   // Get a result variable - must be a literal
+            }
+        }
     }
+
+
     /**
      * Create RDFS model from given schema and model.
      *
@@ -24,7 +45,7 @@ public class Main {
      *            Model
      * @return RDFS model
      */
-    public Model inferStuff(Model schema, Model model) {
+    static public Model inferStuff(Model schema, Model model) {
         Model rdfsModel = ModelFactory.createRDFSModel(schema, model).difference(RDFS);
         rdfsModel.setNsPrefixes(schema);
         rdfsModel.setNsPrefixes(model);
