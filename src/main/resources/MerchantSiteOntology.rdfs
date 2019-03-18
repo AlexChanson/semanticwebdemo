@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xml:base="http://i3s.unice.fr/MerchantSiteOntology#" 
+    xmlns:schema="http://schema.org/"
+>
+    <owl:Ontology rdf:about="http://i3s.unice.fr/MerchantSiteOntology#">
+        <rdfs:label>Merchant Site Ontology</rdfs:label>
+    </owl:Ontology> 
+    <!-- ################################## 5 CLASSES ####################################### -->
+    <rdfs:Class rdf:ID="Organization">
+        <rdfs:label xml:lang="en">Organization</rdfs:label>
+        <rdfs:comment xml:lang="en">Une organisation qui peut mettre un ensemble de produits en vente.</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://schema.org/Organization" />
+    </rdfs:Class>
+    <rdfs:Class rdf:ID="Seller">
+        <rdfs:label xml:lang="en">Seller</rdfs:label>
+        <rdfs:comment xml:lang="Seller">Un vendeur qui peut mettre un ensemble de produits en vente.</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="Organization" />
+    </rdfs:Class> 
+    <rdfs:Class rdf:ID="Product">
+        <rdfs:label xml:lang="en">Product</rdfs:label>
+        <rdfs:comment xml:lang="en">Produit commercial téléphone, accessoire, ...</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://schema.org/Product" />
+    </rdfs:Class> 
+    <rdfs:Class rdf:ID="ParcelDelivery">
+        <rdfs:label xml:lang="en">Shipping</rdfs:label>
+        <rdfs:comment xml:lang="en">Les information de la Livraison , ...</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://schema.org/ParcelDelivery" />
+    </rdfs:Class> 
+    <rdfs:Class rdf:ID="Store">
+		<rdfs:label xml:lang="en">Store</rdfs:label>
+        <rdfs:comment xml:lang="en">The store where the product is kept</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://schema.org/Store" />
+    </rdfs:Class> 
+    <!-- ################################## 29 Properties ####################################### -->
+    <rdf:Property rdf:ID="price">
+        <rdfs:label xml:lang="en">price</rdfs:label>
+        <rdfs:label xml:lang="en">cost</rdfs:label>
+        <rdfs:label xml:lang="en">value</rdfs:label>
+        <rdfs:label xml:lang="en">worth</rdfs:label>
+        <rdfs:label xml:lang="en">tariff</rdfs:label>
+        <rdfs:label xml:lang="en">amount</rdfs:label>
+        <rdfs:comment xml:lang="en">The price of a product.</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/price" />
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+    </rdf:Property>
+    <rdf:Property rdf:ID="image">
+        <rdfs:label xml:lang="en">image</rdfs:label>
+        <rdfs:label xml:lang="en">picture</rdfs:label>
+        <rdfs:label xml:lang="en">show</rdfs:label>
+        <rdfs:label xml:lang="en">display</rdfs:label>
+        <rdfs:label xml:lang="en">view</rdfs:label>
+        <rdfs:comment xml:lang="en">The URL of a product image.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/image" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="locatedIn">
+        <rdfs:label xml:lang="en">locate</rdfs:label>
+        <rdfs:label xml:lang="en">localisation</rdfs:label>
+        <rdfs:label xml:lang="en">situated</rdfs:label>
+        <rdfs:label xml:lang="en">find</rdfs:label>
+        <rdfs:comment xml:lang="en">The location of product ex : [city, country, ...].</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/availableIn" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="productID">
+        <rdfs:label xml:lang="en">id</rdfs:label>
+        <rdfs:label xml:lang="en">identifier</rdfs:label>
+        <rdfs:comment xml:lang="en">l'identifiant d'un produit.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/productID" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="globalId">
+        <rdfs:label xml:lang="en">universal</rdfs:label>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/gtin13" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="name">
+        <rdfs:label xml:lang="en">name</rdfs:label>
+        <rdfs:comment xml:lang="en">L'endroit où le produit est stockÃ©.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/name" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="url">
+        <rdfs:label xml:lang="en">link</rdfs:label>
+        <rdfs:comment xml:lang="en">L'url direct vers la page web de visualisation du produit.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:domain rdf:resource="Seller"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/url" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="location">
+        <rdfs:label xml:lang="en">address</rdfs:label>
+        <rdfs:label xml:lang="en">location</rdfs:label>
+        <rdfs:label xml:lang="en">domicile</rdfs:label>
+        <rdfs:label xml:lang="en">residence</rdfs:label>
+        <rdfs:comment xml:lang="en">The address of the product seller.</rdfs:comment>
+        <rdfs:domain rdf:resource="Seller"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/location" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="country">
+        <rdfs:label xml:lang="en">country</rdfs:label>
+        <rdfs:label xml:lang="en">place</rdfs:label>
+        <rdfs:label xml:lang="en">location</rdfs:label>
+        <rdfs:comment xml:lang="en">The country where the product is located.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/country" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="shippingType">
+        <rdfs:label xml:lang="en">provide</rdfs:label>
+        <rdfs:label xml:lang="en">supply</rdfs:label>
+        <rdfs:label xml:lang="en">furnish</rdfs:label>
+        <rdfs:label xml:lang="en">purvey</rdfs:label>
+        <rdfs:label xml:lang="en">adduce</rdfs:label>
+        <rdfs:comment xml:lang="en">The Shipping modes.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/shippingType" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="email">
+        <rdfs:label xml:lang="en">email</rdfs:label>
+        <rdfs:label xml:lang="en">contact</rdfs:label>
+        <rdfs:label xml:lang="en">mailbox</rdfs:label>
+        <rdfs:comment xml:lang="en">The email of the Seller.</rdfs:comment>
+        <rdfs:domain rdf:resource="Seller"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/email" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="seller">
+        <rdfs:label xml:lang="en">seller</rdfs:label>
+        <rdfs:label xml:lang="en">vendor</rdfs:label>
+        <rdfs:label xml:lang="en">dealer</rdfs:label>
+        <rdfs:label xml:lang="en">merchant</rdfs:label>
+        <rdfs:label xml:lang="en">dealer</rdfs:label>
+        <rdfs:comment xml:lang="en">The Seller of a Product.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="Seller"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/seller" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="color">
+        <rdfs:label xml:lang="en">color</rdfs:label>
+        <rdfs:comment xml:lang="en">The Color of a Product.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/color" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="aggregateRating">
+        <rdfs:label xml:lang="en">rate</rdfs:label>
+        <rdfs:label xml:lang="en">evaluate</rdfs:label>
+        <rdfs:label xml:lang="en">rank</rdfs:label>
+        <rdfs:comment xml:lang="en">The seller rating.</rdfs:comment>
+        <rdfs:domain rdf:resource="Product"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double"/>
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/aggregateRating" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="model">
+        <rdfs:label xml:lang="en">model</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/model" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="weight">
+        <rdfs:label xml:lang="en">weight</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/weight" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="width">
+        <rdfs:label xml:lang="en">width</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/width" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="height">
+        <rdfs:label xml:lang="en">height</rdfs:label>
+        <rdfs:label xml:lang="en">size</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/height" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="releaseDate">
+        <rdfs:label xml:lang="en">release date</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/releaseDate" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="startDate">
+        <rdfs:label xml:lang="en">release</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/startDate" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="sku">
+        <rdfs:label xml:lang="en">sku</rdfs:label>
+        <rdfs:label xml:lang="en">stock keeping unit</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/sku" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="reviewCount">
+        <rdfs:label xml:lang="en">review</rdfs:label>
+        <rdfs:label xml:lang="en">comment</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/reviewCount" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="category">
+        <rdfs:label xml:lang="en">id</rdfs:label>
+        <rdfs:label xml:lang="en">identifiant</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/category" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="eligibleTransactionVolume">
+        <rdfs:label xml:lang="en">free shipping</rdfs:label>
+        <rdfs:label xml:lang="en">free</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/eligibleTransactionVolume" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="cost">
+        <rdfs:label xml:lang="en">cost</rdfs:label>
+        <rdfs:label xml:lang="en">shipping cost</rdfs:label>
+        <rdfs:domain rdf:resource="http://schema.org/ParcelDelivery" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#double" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/cost" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="accessibilityFeature">
+        <rdfs:label xml:lang="en">feature</rdfs:label>
+        <rdfs:label xml:lang="en">characteristic</rdfs:label>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/accessibilityFeature" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="itemShipped">
+        <rdfs:label xml:lang="en">provide</rdfs:label>
+        <rdfs:label xml:lang="en">supply</rdfs:label>
+        <rdfs:label xml:lang="en">furnish</rdfs:label>
+        <rdfs:label xml:lang="en">purvey</rdfs:label>
+        <rdfs:label xml:lang="en">adduce</rdfs:label>
+        <rdfs:comment xml:lang="en">The shipping information</rdfs:comment>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="ParcelDelivery" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/itemShipped" />
+    </rdf:Property>
+    <rdf:Property rdf:ID="availableIn">
+        <rdfs:label xml:lang="en">store</rdfs:label>
+        <rdfs:comment xml:lang="en">The store where the product can be found</rdfs:comment>
+        <rdfs:domain rdf:resource="Product" />
+        <rdfs:range rdf:resource="Store" />
+        <rdfs:subPropertyOf rdf:resource="http://schema.org/availableIn" />
+    </rdf:Property>
+</rdf:RDF>
