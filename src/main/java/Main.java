@@ -1,5 +1,11 @@
+import org.apache.jena.base.Sys;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.util.FileManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,27 +18,40 @@ public class Main {
     public static void main(String[] args) throws Exception{
 
         Model data = ModelFactory.createDefaultModel();
-        InputStream in = new FileInputStream(new File(ressourceFolder + "qalm.rdf"));
+        InputStream in = new FileInputStream(new File(ressourceFolder + "bnb_dump.rdf"));
         data.read(in, "RDF/XML");
 
-        Model schema = ModelFactory.createDefaultModel();
-        in = new FileInputStream(new File(ressourceFolder + "MerchantSiteOntology.rdfs"));
-        schema.read(in, "RDFS/XML");
+        Model foaf = ModelFactory.createDefaultModel();
+        in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
+        foaf.read(in, "RDF/XML");
 
-        Model infered = inferStuff(schema, data);
+        Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
+        //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
+        //schema.read(in, "OWL/XML");
 
-        String queryString = " select * where {?x ?y ?Z} " ;
+        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        reasoner = reasoner.bindSchema(schema);
+        Reasoner simplet = ReasonerRegistry.getRDFSReasoner();
+        simplet = simplet.bindSchema(foaf);
+        InfModel infered = ModelFactory.createInfModel(simplet, data);
+        infered = ModelFactory.createInfModel(reasoner, infered);
+
+        String queryString = " select * where {?x ?y ?z} " ;
         Query query = QueryFactory.create(queryString) ;
+        int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
             ResultSet results = qexec.execSelect() ;
-            for ( int i = 0; results.hasNext() && i < 10; ++i)
+            for ( int i = 0; results.hasNext() && (i < Integer.MAX_VALUE); ++i)
             {
                 QuerySolution soln = results.nextSolution() ;
-                RDFNode x = soln.get("varName") ;       // Get a result variable by name.
-                Resource r = soln.getResource("VarR") ; // Get a result variable - must be a resource
-                Literal l = soln.getLiteral("VarL") ;   // Get a result variable - must be a literal
+                //RDFNode x = soln.get("x") ;       // Get a result variable by name.
+                //Resource r = soln.getResource("y") ; // Get a result variable - must be a resource
+                //Literal l = soln.getLiteral("z") ;   // Get a result variable - must be a literal
+                //System.out.printf("%s   |   %s   |   %s%n",x,r,l);
+                c++;
             }
         }
+        System.out.println(c);
     }
 
 
