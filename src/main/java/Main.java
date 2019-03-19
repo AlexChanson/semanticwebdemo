@@ -30,13 +30,13 @@ public class Main {
         //schema.read(in, "OWL/XML");
 
         Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-        reasoner = reasoner.bindSchema(schema);
-        Reasoner simplet = ReasonerRegistry.getRDFSReasoner();
-        simplet = simplet.bindSchema(foaf);
-        InfModel infered = ModelFactory.createInfModel(simplet, data);
-        infered = ModelFactory.createInfModel(reasoner, infered);
+        reasoner = reasoner.bindSchema(schema.union(foaf));
+        //Reasoner simplet = ReasonerRegistry.getRDFSReasoner();
+        //simplet = simplet.bindSchema(foaf);
+        InfModel infered = ModelFactory.createInfModel(reasoner, data);
+        //infered = ModelFactory.createInfModel(reasoner, infered);
 
-        String queryString = " select * where {?x ?y ?z} " ;
+        String queryString = " select * where {?x rdf:type ?z} " ;
         Query query = QueryFactory.create(queryString) ;
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
@@ -44,10 +44,10 @@ public class Main {
             for ( int i = 0; results.hasNext() && (i < Integer.MAX_VALUE); ++i)
             {
                 QuerySolution soln = results.nextSolution() ;
-                //RDFNode x = soln.get("x") ;       // Get a result variable by name.
-                //Resource r = soln.getResource("y") ; // Get a result variable - must be a resource
-                //Literal l = soln.getLiteral("z") ;   // Get a result variable - must be a literal
-                //System.out.printf("%s   |   %s   |   %s%n",x,r,l);
+                RDFNode x = soln.get("x") ;       // Get a result variable by name.
+                Resource r = soln.getResource("y") ; // Get a result variable - must be a resource
+                Literal l = soln.getLiteral("z") ;   // Get a result variable - must be a literal
+                System.out.printf("%s   |   %s   |   %s%n",x,r,l);
                 c++;
             }
         }
