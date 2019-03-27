@@ -10,6 +10,7 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.FileManager;
 
 import java.io.*;
 import java.util.Iterator;
@@ -20,13 +21,13 @@ public class Main {
 
     static Model data; // données de l'instance
 
-    static Model bibo;
+    static OntModel bibo;
     
     static Model infered; // objet instance faisant les inférences souhaitées
 
-    static Model schema; // schéma principal
+    static OntModel schema; // schéma principal
 
-    static Model foaf; // schéma FOAF
+    static OntModel foaf; // schéma FOAF
 
     static Reasoner reasoner; // Raisonneur choisit
 
@@ -46,20 +47,43 @@ public class Main {
     }
 
     public static void loadFileDocumentManagerDemo() throws FileNotFoundException {
-        foaf = ModelFactory.createDefaultModel();
+        foaf = ModelFactory.createOntologyModel();
         InputStream in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
         foaf.read(in, "RDF/XML");
         
     	OntDocumentManager dm = new OntDocumentManager("file:" + ressourceFolder + "blterms.owl");
+    	dm.setFileManager(FileManager.get());
+        bibo = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
+        bibo.read("file:" + ressourceFolder + "bibo.rdf");
+    	dm.addModel("http://test_uri.com", bibo);
+
     	OntModelSpec modelSpec = new OntModelSpec( OntModelSpec.OWL_MEM );
     	modelSpec.setDocumentManager(dm);
         schema = ModelFactory.createOntologyModel(modelSpec);
+
+
+        // "file:" + ressourceFolder + "bibo.rdf"
         
-        OntDocumentManager dm_bibo = new OntDocumentManager("file:" + ressourceFolder + "bibo.rdf");
-    	OntModelSpec modelSpec_bibo = new OntModelSpec( OntModelSpec.OWL_MEM );
-    	modelSpec_bibo.setDocumentManager(dm_bibo);
-        bibo = ModelFactory.createOntologyModel(modelSpec_bibo);
-        
+        OntDocumentManager ontDocumentManager = OntDocumentManager.getInstance();
+    	OntModelSpec modelSpec_bibo = new OntModelSpec( OntModelSpec.OWL_MEM_TRANS_INF );
+
+    	bibo = ModelFactory.createOntologyModel();
+    	bibo.read("file:" + ressourceFolder + "bibo.rdf", "RDF/XML");
+
+    	ontDocumentManager.addModel("test", bibo);
+
+    	bibo = ontDocumentManager.getOntology("test2", modelSpec_bibo);
+
+        System.out.println("\n");
+    	System.out.println("Incorrectement chargé:");
+    	System.out.println(bibo);
+        System.out.println("\n");
+
+        bibo = ontDocumentManager.getOntology("test", modelSpec_bibo);
+        System.out.println("Correctement chargé:");
+        System.out.println(bibo);
+        System.out.println("\n");
+
         //Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
         //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         //schema.read(in, "OWL/XML");
