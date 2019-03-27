@@ -6,44 +6,84 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.FileManager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
     static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
 
-    public static void main(String[] args) throws Exception{
+    static Model data; // données de l'instance
 
+    static Model infered; // objet instance faisant les inférences souhaitées
+
+    static Model schema; // schéma principal
+
+    static Model foaf; // schéma FOAF
+
+    static Reasoner reasoner; // Raisonneur choisit
+
+    static PrefixMapping prefixMapping; // préfixes utilisés
+
+    public static void loadFileJavaDemo() throws FileNotFoundException {
+
+        // Initialisation du modèle de graphe de l'instance
+        data = ModelFactory.createDefaultModel();
+
+        // Création d'un InputStream de Java pour lire le fichier RDF de la British National Library
+        InputStream in = new FileInputStream(new File(ressourceFolder + "bnb_dump.rdf"));
+
+        // Charge le modèle depuis le flux
+        data.read(in, "RDF/XML");
+
+    }
+
+    public static void loadFileDocumentManagerDemo() throws FileNotFoundException {
+        foaf = ModelFactory.createDefaultModel();
+        InputStream in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
+        foaf.read(in, "RDF/XML");
+        
     	OntDocumentManager dm = new OntDocumentManager("file:" + ressourceFolder + "blterms.owl");
     	OntModelSpec modelSpec = new OntModelSpec( OntModelSpec.OWL_MEM );
     	modelSpec.setDocumentManager(dm);
-        OntModel  ontModel = ModelFactory.createOntologyModel(modelSpec);
-    	
-    	
-    	
-        Model data = ModelFactory.createDefaultModel();
-        InputStream in = new FileInputStream(new File(ressourceFolder + "bnb_dump.rdf"));
-        data.read(in, "RDF/XML");
-
-        Model foaf = ModelFactory.createDefaultModel();
-        in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
-        foaf.read(in, "RDF/XML");
-
-        Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
+        schema = ModelFactory.createOntologyModel(modelSpec);
+        
+        //Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
         //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         //schema.read(in, "OWL/XML");
+    }
 
-        Reasoner reasoner = ReasonerRegistry.getTransitiveReasoner();
-        reasoner = reasoner.bindSchema(ontModel.union(foaf));
-        //Reasoner simplet = ReasonerRegistry.getRDFSReasoner();
-        //simplet = simplet.bindSchema(foaf);
-        InfModel infered = ModelFactory.createInfModel(reasoner, data);
-        //infered = ModelFactory.createInfModel(reasoner, infered);
+    public static void mergeSchemasBindReasonerDemo() {
+        reasoner = reasoner.bindSchema(schema.union(foaf));
+    }
 
+    public static void createInferenceModelDemo() {
+
+        //reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
+        reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
+
+        // autres raisonneurs possibles:
+        //reasoner = ReasonerRegistry.getRDFSReasoner();
+        //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
+        //reasoner = ReasonerRegistry.getOWLMiniReasoner();
+        //reasoner = ReasonerRegistry.getOWLMicroReasoner();
+
+        infered = ModelFactory.createInfModel(reasoner, data);
+    }
+
+    public static void setupPrefixesDemo() {
+        prefixMapping = PrefixMapping.Factory.create();
+    }
+
+    public static void addTriplets() {
+
+    }
+
+    public static void sparqlQueryDemo() {
         String queryString = " select distinct ?y where {?x ?y ?z} " ;
         Query query = QueryFactory.create(queryString) ;
         int c = 0;
@@ -62,20 +102,40 @@ public class Main {
         System.out.println(c);
     }
 
+    public static void writeModelSemanticWebFormat() {
 
-    /**
-     * Create RDFS model from given schema and model.
-     *
-     * @param schema
-     *            Schema
-     * @param model
-     *            Model
-     * @return RDFS model
-     */
-    static public Model inferStuff(Model schema, Model model) {
-        Model rdfsModel = ModelFactory.createRDFSModel(schema, model).difference(RDFS);
-        rdfsModel.setNsPrefixes(schema);
-        rdfsModel.setNsPrefixes(model);
-        return rdfsModel;
+    }
+
+    public static void writeModelClassicFormat() {
+
+    }
+
+
+    public static void main(String[] args) throws Exception{
+
+
+        loadFileJavaDemo();
+        loadFileDocumentManagerDemo();
+        createInferenceModelDemo();
+        mergeSchemasBindReasonerDemo();
+        setupPrefixesDemo();
+        addTriplets();
+        sparqlQueryDemo();
+        writeModelSemanticWebFormat();
+        writeModelClassicFormat();
+
+        saveToFile(ressourceFolder + "inf.rdf", infered);
+
+    }
+
+    static public void saveToFile(String path, Model model){
+        try {
+            File out = new File(path);
+            FileOutputStream fos = new FileOutputStream(out);
+            RDFDataMgr.write(fos, model, RDFFormat.RDFXML);
+            fos.close();
+        }catch (IOException e){
+
+        }
     }
 }
