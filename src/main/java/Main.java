@@ -1,3 +1,4 @@
+import org.apache.jena.atlas.json.io.JsonWriter;
 import org.apache.jena.base.Sys;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
@@ -9,7 +10,6 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.shared.PrefixMapping;
-import org.apache.jena.util.FileManager;
 
 import java.io.*;
 
@@ -77,6 +77,9 @@ public class Main {
 
     public static void setupPrefixesDemo() {
         prefixMapping = PrefixMapping.Factory.create();
+
+        // xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dct="http://purl.org/dc/terms/" xmlns:isbd="http://iflastandards.info/ns/isbd/elements/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:rdau="http://rdaregistry.info/Elements/u/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:blt="http://www.bl.uk/schemas/bibliographic/blterms#" xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:event="http://purl.org/NET/c4dm/event.owl#" xmlns:org="http://www.w3.org/ns/org#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:umbel="http://umbel.org/umbel#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:interval="http://reference.data.gov.uk/def/intervals/" xmlns:time="http://www.w3.org/2006/time#"
+
     }
 
     public static void addTriplets() {
@@ -105,19 +108,30 @@ public class Main {
     public static void writeModelSemanticWebFormat(String path, Model model) {
 
 
-        // écrire le résultat en RDF
+        // écrire le résultat en Turtle
 
         try {
             File out = new File(path);
             FileOutputStream fos = new FileOutputStream(out);
-            RDFDataMgr.write(fos, model, RDFFormat.RDFXML);
+            RDFDataMgr.write(fos, model, RDFFormat.TURTLE);
             fos.close();
         }catch (IOException e){
-
+            e.printStackTrace();
         }
     }
 
     public static void writeModelClassicFormat(String path, Model model) {
+
+        // écrire le résultat en JSON-LD
+
+        try {
+            File out = new File(path);
+            FileOutputStream fos = new FileOutputStream(out);
+            RDFDataMgr.write(fos, model, RDFFormat.JSONLD);
+            fos.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -132,8 +146,8 @@ public class Main {
         setupPrefixesDemo();
         addTriplets();
         sparqlQueryDemo();
-        writeModelSemanticWebFormat(ressourceFolder + "inf.rdf", infered);
-        writeModelClassicFormat(ressourceFolder + "?????", infered);
+        writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
+        writeModelClassicFormat(ressourceFolder + "inf.json", infered);
 
     }
 
