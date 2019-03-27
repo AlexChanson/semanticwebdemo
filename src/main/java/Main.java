@@ -13,6 +13,7 @@ import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.FileManager;
 
 import java.io.*;
+import java.util.Iterator;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
@@ -84,12 +85,15 @@ public class Main {
     public static void setupPrefixesDemo() {
         prefixMapping = PrefixMapping.Factory.create();
 
-        // xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dct="http://purl.org/dc/terms/" xmlns:isbd="http://iflastandards.info/ns/isbd/elements/" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:rdau="http://rdaregistry.info/Elements/u/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:blt="http://www.bl.uk/schemas/bibliographic/blterms#" xmlns:bio="http://purl.org/vocab/bio/0.1/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:event="http://purl.org/NET/c4dm/event.owl#" xmlns:org="http://www.w3.org/ns/org#" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:umbel="http://umbel.org/umbel#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:interval="http://reference.data.gov.uk/def/intervals/" xmlns:time="http://www.w3.org/2006/time#"
+        prefixMapping.setNsPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+
+        prefixMapping.setNsPrefix("blt", "http://www.bl.uk/schemas/bibliographic/blterms#");
+        prefixMapping.setNsPrefix("bibo", "http://purl.org/ontology/bibo/");
+        prefixMapping.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
 
     }
 
     public static void addTriplets() {
-
     }
 
     public static void sparqlQueryDemo() {
@@ -111,6 +115,47 @@ public class Main {
             }
         }
         System.out.println(c);
+
+        System.out.println("New\n");
+
+        prefixMapping.getNsPrefixMap().forEach((k,v) -> System.out.println(k + ": "+ v));
+
+        queryString = "select distinct ?c where {?x rdf:type ?c}";
+
+        ParameterizedSparqlString sparqlString = new ParameterizedSparqlString(queryString, prefixMapping);
+
+        query = sparqlString.asQuery();
+
+
+        try (QueryExecution queryExecution = QueryExecutionFactory.create(query, infered)) {
+            for (QuerySolution sol : execSelect(queryExecution)) {
+                StringBuilder sb = new StringBuilder();
+
+                Iterator<String> it = sol.varNames();
+
+                while (it.hasNext()) {
+                    String var = it.next();
+
+                    sb.append(var);
+                    sb.append(": ");
+                    sb.append(sol.get(var).toString());
+                    sb.append(" ,");
+
+                }
+
+                System.out.println(sb.toString());
+
+            }
+
+
+        }
+
+
+
+
+
+
+
     }
 
     public static void writeModelSemanticWebFormat(String path, Model model) {
@@ -156,6 +201,17 @@ public class Main {
         //writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
         //writeModelClassicFormat(ressourceFolder + "inf.json", infered);
 
+    }
+
+
+    public static Iterable<QuerySolution> execSelect(QueryExecution queryExecution) {
+        return new Iterable<QuerySolution>() {
+            @Override
+            public Iterator<QuerySolution> iterator() {
+                ResultSet resultSet = queryExecution.execSelect();
+                return resultSet;
+            }
+        };
     }
 
 }
