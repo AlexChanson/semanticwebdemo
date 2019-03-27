@@ -20,6 +20,8 @@ public class Main {
 
     static Model data; // données de l'instance
 
+    static Model bibo;
+    
     static Model infered; // objet instance faisant les inférences souhaitées
 
     static Model schema; // schéma principal
@@ -53,13 +55,19 @@ public class Main {
     	modelSpec.setDocumentManager(dm);
         schema = ModelFactory.createOntologyModel(modelSpec);
         
+        OntDocumentManager dm_bibo = new OntDocumentManager("file:" + ressourceFolder + "bibo.rdf");
+    	OntModelSpec modelSpec_bibo = new OntModelSpec( OntModelSpec.OWL_MEM );
+    	modelSpec_bibo.setDocumentManager(dm_bibo);
+        bibo = ModelFactory.createOntologyModel(modelSpec_bibo);
+        
         //Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
         //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         //schema.read(in, "OWL/XML");
     }
 
     public static void mergeSchemasBindReasonerDemo() {
-        reasoner = reasoner.bindSchema(schema.union(foaf));
+        reasoner = reasoner.bindSchema(schema.union(foaf).union(bibo));
+        
     }
 
     public static void createInferenceModelDemo() {
