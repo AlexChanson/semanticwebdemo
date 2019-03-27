@@ -1,4 +1,5 @@
 import org.apache.jena.base.Sys;
+import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
@@ -15,7 +16,6 @@ import java.io.*;
 public class Main {
     static String ressourceFolder = "src/main/resources/";
     static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
-
 
     static Model data; // données de l'instance
 
@@ -46,14 +46,18 @@ public class Main {
         foaf = ModelFactory.createDefaultModel();
         InputStream in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
         foaf.read(in, "RDF/XML");
-
-        Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
+        
+    	OntDocumentManager dm = new OntDocumentManager("file:" + ressourceFolder + "blterms.owl");
+    	OntModelSpec modelSpec = new OntModelSpec( OntModelSpec.OWL_MEM );
+    	modelSpec.setDocumentManager(dm);
+        schema = ModelFactory.createOntologyModel(modelSpec);
+        
+        //Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
         //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         //schema.read(in, "OWL/XML");
     }
 
     public static void mergeSchemasBindReasonerDemo() {
-
         reasoner = reasoner.bindSchema(schema.union(foaf));
     }
 
@@ -80,7 +84,7 @@ public class Main {
     }
 
     public static void sparqlQueryDemo() {
-        String queryString = " select * where {?x :type ?z} " ;
+        String queryString = " select distinct ?y where {?x ?y ?z} " ;
         Query query = QueryFactory.create(queryString) ;
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
@@ -123,8 +127,8 @@ public class Main {
 
         loadFileJavaDemo();
         loadFileDocumentManagerDemo();
-        mergeSchemasBindReasonerDemo();
         createInferenceModelDemo();
+        mergeSchemasBindReasonerDemo();
         setupPrefixesDemo();
         addTriplets();
         sparqlQueryDemo();
