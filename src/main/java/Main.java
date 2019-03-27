@@ -1,4 +1,5 @@
 import org.apache.jena.base.Sys;
+import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.query.*;
@@ -17,6 +18,13 @@ public class Main {
 
     public static void main(String[] args) throws Exception{
 
+    	OntDocumentManager dm = new OntDocumentManager("file:" + ressourceFolder + "blterms.owl");
+    	OntModelSpec modelSpec = new OntModelSpec( OntModelSpec.OWL_MEM );
+    	modelSpec.setDocumentManager(dm);
+        OntModel  ontModel = ModelFactory.createOntologyModel(modelSpec);
+    	
+    	
+    	
         Model data = ModelFactory.createDefaultModel();
         InputStream in = new FileInputStream(new File(ressourceFolder + "bnb_dump.rdf"));
         data.read(in, "RDF/XML");
@@ -29,14 +37,14 @@ public class Main {
         //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         //schema.read(in, "OWL/XML");
 
-        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-        reasoner = reasoner.bindSchema(schema.union(foaf));
+        Reasoner reasoner = ReasonerRegistry.getTransitiveReasoner();
+        reasoner = reasoner.bindSchema(ontModel.union(foaf));
         //Reasoner simplet = ReasonerRegistry.getRDFSReasoner();
         //simplet = simplet.bindSchema(foaf);
         InfModel infered = ModelFactory.createInfModel(reasoner, data);
         //infered = ModelFactory.createInfModel(reasoner, infered);
 
-        String queryString = " select * where {?x rdf:type ?z} " ;
+        String queryString = " select distinct ?y where {?x ?y ?z} " ;
         Query query = QueryFactory.create(queryString) ;
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
