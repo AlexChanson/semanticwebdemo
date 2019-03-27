@@ -59,8 +59,8 @@ public class Main {
 
     public static void createInferenceModelDemo() {
 
-        reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
-        //reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
+        //reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
+        reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
 
         // autres raisonneurs possibles:
         //reasoner = ReasonerRegistry.getRDFSReasoner();
@@ -119,6 +119,8 @@ public class Main {
         sparqlQueryDemo();
         writeModelSemanticWebFormat();
         writeModelClassicFormat();
+
+        saveToFile(ressourceFolder + "inf.rdf", infered);
 
     }
 
