@@ -5,39 +5,80 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.FileManager;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
     static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
 
-    public static void main(String[] args) throws Exception{
 
-        Model data = ModelFactory.createDefaultModel();
+    static Model data;
+
+    static Model infered;
+
+    static Model schema;
+
+    static Model foaf;
+
+    static Reasoner reasoner;
+
+    static PrefixMapping prefixMapping;
+
+    public static void loadFileJavaDemo() throws FileNotFoundException {
+
+        // Initialisation du modèle de graphe de l'instance
+        data = ModelFactory.createDefaultModel();
+
+        // Création d'un InputStream de Java pour lire le fichier RDF de la British National Library
         InputStream in = new FileInputStream(new File(ressourceFolder + "bnb_dump.rdf"));
+
+        // Charge le modèle depuis le flux
         data.read(in, "RDF/XML");
 
-        Model foaf = ModelFactory.createDefaultModel();
-        in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
+    }
+
+    public static void loadFileDocumentManagerDemo() throws FileNotFoundException {
+        foaf = ModelFactory.createDefaultModel();
+        InputStream in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
         foaf.read(in, "RDF/XML");
 
         Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
         //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         //schema.read(in, "OWL/XML");
+    }
 
-        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+    public static void mergeSchemasBindReasonerDemo() {
+
         reasoner = reasoner.bindSchema(schema.union(foaf));
-        //Reasoner simplet = ReasonerRegistry.getRDFSReasoner();
-        //simplet = simplet.bindSchema(foaf);
-        InfModel infered = ModelFactory.createInfModel(reasoner, data);
-        //infered = ModelFactory.createInfModel(reasoner, infered);
+    }
 
-        String queryString = " select * where {?x rdf:type ?z} " ;
+    public static void createInferenceModelDemo() {
+
+        reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
+        //reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
+        //reasoner = ReasonerRegistry.getRDFSReasoner();
+
+        infered = ModelFactory.createInfModel(reasoner, data);
+    }
+
+    public static void setupPrefixesDemo() {
+        prefixMapping = PrefixMapping.Factory.create();
+    }
+
+    public static void addTriplets() {
+
+    }
+
+    public static void sparqlQueryDemo() {
+        String queryString = " select * where {?x :type ?z} " ;
         Query query = QueryFactory.create(queryString) ;
+
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
             ResultSet results = qexec.execSelect() ;
@@ -54,20 +95,28 @@ public class Main {
         System.out.println(c);
     }
 
+    public static void writeModelSemanticWebFormat() {
 
-    /**
-     * Create RDFS model from given schema and model.
-     *
-     * @param schema
-     *            Schema
-     * @param model
-     *            Model
-     * @return RDFS model
-     */
-    static public Model inferStuff(Model schema, Model model) {
-        Model rdfsModel = ModelFactory.createRDFSModel(schema, model).difference(RDFS);
-        rdfsModel.setNsPrefixes(schema);
-        rdfsModel.setNsPrefixes(model);
-        return rdfsModel;
     }
+
+    public static void writeModelClassicFormat() {
+
+    }
+
+
+    public static void main(String[] args) throws Exception{
+
+
+        loadFileJavaDemo();
+        loadFileDocumentManagerDemo();
+        mergeSchemasBindReasonerDemo();
+        createInferenceModelDemo();
+        setupPrefixesDemo();
+        addTriplets();
+        sparqlQueryDemo();
+        writeModelSemanticWebFormat();
+        writeModelClassicFormat();
+
+    }
+
 }
