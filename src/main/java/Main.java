@@ -5,13 +5,12 @@ import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.FileManager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
@@ -78,7 +77,6 @@ public class Main {
     public static void sparqlQueryDemo() {
         String queryString = " select * where {?x :type ?z} " ;
         Query query = QueryFactory.create(queryString) ;
-
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
             ResultSet results = qexec.execSelect() ;
@@ -119,4 +117,14 @@ public class Main {
 
     }
 
+    static public void saveToFile(String path, Model model){
+        try {
+            File out = new File(path);
+            FileOutputStream fos = new FileOutputStream(out);
+            RDFDataMgr.write(fos, model, RDFFormat.RDFXML);
+            fos.close();
+        }catch (IOException e){
+
+        }
+    }
 }
