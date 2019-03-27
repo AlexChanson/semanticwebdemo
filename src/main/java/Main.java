@@ -61,7 +61,12 @@ public class Main {
 
         reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
         //reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
+
+        // autres raisonneurs possibles:
         //reasoner = ReasonerRegistry.getRDFSReasoner();
+        //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
+        //reasoner = ReasonerRegistry.getOWLMiniReasoner();
+        //reasoner = ReasonerRegistry.getOWLMicroReasoner();
 
         infered = ModelFactory.createInfModel(reasoner, data);
     }
