@@ -1,5 +1,3 @@
-import org.apache.jena.atlas.json.io.JsonWriter;
-import org.apache.jena.base.Sys;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
@@ -25,7 +23,7 @@ public class Main {
     
     static Model infered; // objet instance faisant les inférences souhaitées
 
-    static OntModel schema; // schéma principal
+    static Model blterms; // schéma principal
 
     static OntModel foaf; // schéma FOAF
 
@@ -47,22 +45,20 @@ public class Main {
     }
 
     public static void loadFileDocumentManagerDemo() throws FileNotFoundException {
+
+        // chargement d'un OntModel depuis un fichier
+
         foaf = ModelFactory.createOntologyModel();
         InputStream in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
         foaf.read(in, "RDF/XML");
-        
-    	OntDocumentManager dm = new OntDocumentManager("file:" + ressourceFolder + "blterms.owl");
-    	dm.setFileManager(FileManager.get());
-        bibo = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RDFS_INF);
-        bibo.read("file:" + ressourceFolder + "bibo.rdf");
-    	dm.addModel("http://test_uri.com", bibo);
 
-    	OntModelSpec modelSpec = new OntModelSpec( OntModelSpec.OWL_MEM );
-    	modelSpec.setDocumentManager(dm);
-        schema = ModelFactory.createOntologyModel(modelSpec);
+        // chargement d'un Modèle en passant par le FileManager
 
+        blterms = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");
+        in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
+        blterms.read(in, "OWL/XML");
 
-        // "file:" + ressourceFolder + "bibo.rdf"
+        // chargement d'un OntModel depuis le OntDocumentManager
         
         OntDocumentManager ontDocumentManager = OntDocumentManager.getInstance();
     	OntModelSpec modelSpec_bibo = new OntModelSpec( OntModelSpec.OWL_MEM_TRANS_INF );
@@ -84,9 +80,7 @@ public class Main {
         System.out.println(bibo);
         System.out.println("\n");
 
-        //Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
-        //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
-        //schema.read(in, "OWL/XML");
+
     }
 
 
@@ -101,7 +95,7 @@ public class Main {
         //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
         //reasoner = ReasonerRegistry.getOWLMiniReasoner();
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
-        reasoner = reasoner.bindSchema(schema.union(foaf));
+        reasoner = reasoner.bindSchema(blterms.union(foaf));
         infered = ModelFactory.createInfModel(reasoner, data);
     }
 
