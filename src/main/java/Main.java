@@ -10,6 +10,7 @@ import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.FileManager;
 
 import java.io.*;
 
@@ -37,7 +38,7 @@ public class Main {
         data = ModelFactory.createDefaultModel();
 
         // Création d'un InputStream de Java pour lire le fichier RDF de la British National Library
-        InputStream in = new FileInputStream(new File(ressourceFolder + "bnb_dump.rdf"));
+        InputStream in = new FileInputStream(new File(ressourceFolder + "BNBLODB_sample.rdf"));
 
         // Charge le modèle depuis le flux
         data.read(in, "RDF/XML");
@@ -59,27 +60,24 @@ public class Main {
     	modelSpec_bibo.setDocumentManager(dm_bibo);
         bibo = ModelFactory.createOntologyModel(modelSpec_bibo);
         
-        //Model schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
-        //in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
-        //schema.read(in, "OWL/XML");
+        schema = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");//ModelFactory.createDefaultModel();
+        in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
+        schema.read(in, "OWL/XML");
     }
 
-    public static void mergeSchemasBindReasonerDemo() {
-        reasoner = reasoner.bindSchema(schema.union(foaf).union(bibo));
-        
-    }
+
 
     public static void createInferenceModelDemo() {
 
         //reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
         reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
-
+        
         // autres raisonneurs possibles:
         //reasoner = ReasonerRegistry.getRDFSReasoner();
         //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
         //reasoner = ReasonerRegistry.getOWLMiniReasoner();
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
-
+        reasoner = reasoner.bindSchema(schema.union(foaf));
         infered = ModelFactory.createInfModel(reasoner, data);
     }
 
@@ -95,7 +93,9 @@ public class Main {
     }
 
     public static void sparqlQueryDemo() {
-        String queryString = " select distinct ?y where {?x ?y ?z} " ;
+        String queryString = "PREFIX owl: <http://purl.org/NET/c4dm/event.owl#>"
+        		+ "PREFIX bl: <http://www.bl.uk/schemas/bibliographic/blterms#>"
+        		+ " select distinct ?x ?y where {?x ?y owl:Event} " ;
         Query query = QueryFactory.create(queryString) ;
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
@@ -150,12 +150,11 @@ public class Main {
         loadFileJavaDemo();
         loadFileDocumentManagerDemo();
         createInferenceModelDemo();
-        mergeSchemasBindReasonerDemo();
         setupPrefixesDemo();
         addTriplets();
         sparqlQueryDemo();
-        writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
-        writeModelClassicFormat(ressourceFolder + "inf.json", infered);
+        //writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
+        //writeModelClassicFormat(ressourceFolder + "inf.json", infered);
 
     }
 

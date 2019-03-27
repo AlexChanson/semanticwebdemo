@@ -104,3 +104,4 @@ cwallet.sso.lck### Java template
 hs_err_pid*
 
 BNBLODB_sample.rdf
+/target/
