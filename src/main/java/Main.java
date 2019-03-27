@@ -98,11 +98,22 @@ public class Main {
         System.out.println(c);
     }
 
-    public static void writeModelSemanticWebFormat() {
+    public static void writeModelSemanticWebFormat(String path, Model model) {
 
+
+        // écrire le résultat en RDF
+
+        try {
+            File out = new File(path);
+            FileOutputStream fos = new FileOutputStream(out);
+            RDFDataMgr.write(fos, model, RDFFormat.RDFXML);
+            fos.close();
+        }catch (IOException e){
+
+        }
     }
 
-    public static void writeModelClassicFormat() {
+    public static void writeModelClassicFormat(String path, Model model) {
 
     }
 
@@ -117,21 +128,9 @@ public class Main {
         setupPrefixesDemo();
         addTriplets();
         sparqlQueryDemo();
-        writeModelSemanticWebFormat();
-        writeModelClassicFormat();
-
-        saveToFile(ressourceFolder + "inf.rdf", infered);
+        writeModelSemanticWebFormat(ressourceFolder + "inf.rdf", infered);
+        writeModelClassicFormat(ressourceFolder + "?????", infered);
 
     }
 
-    static public void saveToFile(String path, Model model){
-        try {
-            File out = new File(path);
-            FileOutputStream fos = new FileOutputStream(out);
-            RDFDataMgr.write(fos, model, RDFFormat.RDFXML);
-            fos.close();
-        }catch (IOException e){
-
-        }
-    }
 }
