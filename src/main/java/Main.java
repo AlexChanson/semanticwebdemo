@@ -17,17 +17,17 @@ public class Main {
     static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
 
 
-    static Model data;
+    static Model data; // données de l'instance
 
-    static Model infered;
+    static Model infered; // objet instance faisant les inférences souhaitées
 
-    static Model schema;
+    static Model schema; // schéma principal
 
-    static Model foaf;
+    static Model foaf; // schéma FOAF
 
-    static Reasoner reasoner;
+    static Reasoner reasoner; // Raisonneur choisit
 
-    static PrefixMapping prefixMapping;
+    static PrefixMapping prefixMapping; // préfixes utilisés
 
     public static void loadFileJavaDemo() throws FileNotFoundException {
 
