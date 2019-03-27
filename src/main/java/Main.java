@@ -89,10 +89,7 @@ public class Main {
         //schema.read(in, "OWL/XML");
     }
 
-    public static void mergeSchemasBindReasonerDemo() {
-        reasoner = reasoner.bindSchema(schema.union(foaf).union(bibo));
-        
-    }
+
 
     public static void createInferenceModelDemo() {
 
@@ -104,7 +101,7 @@ public class Main {
         //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
         //reasoner = ReasonerRegistry.getOWLMiniReasoner();
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
-
+        reasoner = reasoner.bindSchema(schema.union(foaf));
         infered = ModelFactory.createInfModel(reasoner, data);
     }
 
@@ -123,7 +120,9 @@ public class Main {
     }
 
     public static void sparqlQueryDemo() {
-        String queryString = " select distinct ?y where {?x ?y ?z} " ;
+        String queryString = "PREFIX owl: <http://purl.org/NET/c4dm/event.owl#>"
+        		+ "PREFIX bl: <http://www.bl.uk/schemas/bibliographic/blterms#>"
+        		+ " select distinct ?x ?y where {?x ?y owl:Event} " ;
         Query query = QueryFactory.create(queryString) ;
         int c = 0;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
@@ -219,7 +218,6 @@ public class Main {
         loadFileJavaDemo();
         loadFileDocumentManagerDemo();
         createInferenceModelDemo();
-        mergeSchemasBindReasonerDemo();
         setupPrefixesDemo();
         addTriplets();
         sparqlQueryDemo();
