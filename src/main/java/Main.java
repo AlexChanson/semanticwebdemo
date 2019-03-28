@@ -1,3 +1,4 @@
+import org.apache.jena.base.Sys;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.impl.LiteralLabelFactory;
 import org.apache.jena.ontology.*;
@@ -25,6 +26,8 @@ public class Main {
     static Model data; // données de l'instance
 
     static OntModel bibo;
+
+    static Model fullSchema;
     
     static Model infered; // objet instance faisant les inférences souhaitées
 
@@ -100,7 +103,11 @@ public class Main {
         //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
         //reasoner = ReasonerRegistry.getOWLMiniReasoner();
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
-        reasoner = reasoner.bindSchema(blterms.union(foaf).union(bibo));
+
+
+        fullSchema = blterms.union(foaf).union(bibo);
+
+        reasoner = reasoner.bindSchema(fullSchema);
         infered = ModelFactory.createInfModel(reasoner, data);
     }
 
@@ -108,6 +115,7 @@ public class Main {
         prefixMapping = PrefixMapping.Factory.create();
 
         prefixMapping.setNsPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        prefixMapping.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
         prefixMapping.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
         prefixMapping.setNsPrefix("event", "http://purl.org/NET/c4dm/event.owl#");
 
@@ -117,6 +125,7 @@ public class Main {
 
         prefixMapping.setNsPrefix("mo", ns);
 
+        System.out.println("\nPréfixes utilisés:");
         prefixMapping.getNsPrefixMap().forEach((k,v) -> System.out.println(k + ": "+ v));
 
 
@@ -144,26 +153,25 @@ public class Main {
 
 
     public static void sparqlQueryDemo() {
-    	Scanner sc = new Scanner(System.in);
-    	System.out.println("Appuyezsurenrt�epourcontinuer");
-    	sc.nextLine();
-    	sparql_query("select distinct ?x ?y where {?x ?y event:Event}", data);
-    	System.out.println("Appuyezsurenrt�epourcontinuer");
-    	sc.nextLine();
-        sparql_query("select distinct ?x ?y where {?x ?y event:Event}", infered);
-        System.out.println("Appuyezsurenrt�epourcontinuer");
-        sc.nextLine();
-        sparql_query("select distinct ?c where {?x rdf:type ?c}", infered);
 
-        System.out.println("New\n");
+        //block_enter();
+    	//sparql_query("select distinct ?x ?y where {?x ?y event:Event}", data);
 
+    	//block_enter();
+        //sparql_query("select distinct ?x ?y where {?x ?y event:Event}", infered);
+
+        //block_enter();
+        //sparql_query("select distinct ?c where {?x rdf:type ?c}", infered);
+
+        block_enter();
 
         System.out.println("\nChercher les audio books");
-        sparql_query("select ?x ?y ?z where { ?x rdf:type mo:AudioBook . ?x ?y ?z }", infered);
+        //sparql_query("select ?x ?y ?z where { ?x rdf:type mo:AudioBook . ?x ?y ?z }", infered);
+
+        block_enter();
 
         System.out.println("\nSuperclasses de l'audio book");
-        sparql_query("select ?x ?y ?z where { ?x ?y ?z . ?x mo:audioLength ?al } ", infered);
-
+        sparql_query("select distinct ?x where { mo:audioBook1 rdf:type ?y . ?y rdfs:subClassOf ?x } ", infered);
 
     }
 
@@ -199,18 +207,43 @@ public class Main {
 
     public static void main(String[] args) throws Exception{
 
-
+        System.out.println("Chargement de l'instance");
         loadFileJavaDemo();
+
+        System.out.println("Chargement des ontologies");
+        block_enter();
         loadFileDocumentManagerDemo();
+
+        System.out.println("Création d'une classe et d'un individu");
+        block_enter();
         addTriplets();
 
+        System.out.println("Création du modèle d'inférence");
+        block_enter();
         createInferenceModelDemo();
+
+
+        System.out.println("Fabrication des préfixes");
+        block_enter();
         setupPrefixesDemo();
 
-
+        System.out.println("Requêtage de l'instance");
         sparqlQueryDemo();
-        //writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
-        //writeModelClassicFormat(ressourceFolder + "inf.json", infered);
+
+        // écrire l'instance
+        System.out.println("Écriture de l'instance au format Turtle");
+        block_enter();
+        writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
+
+        System.out.println("Écriture de l'instance au format json-ld");
+        block_enter();
+        writeModelClassicFormat(ressourceFolder + "inf.json", infered);
+
+
+        System.out.println("Écriture du nouveau schéma");
+        block_enter();
+        writeModelSemanticWebFormat(ressourceFolder+"nouveau_schema.ttl", fullSchema);
+
 
     }
 
@@ -225,6 +258,12 @@ public class Main {
         };
     }
 
+
+    public static void block_enter() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Appuyez sur entrée pour continuer...");
+        sc.nextLine();
+    }
 
     public static void sparql_query(String queryString, Model model) {
 
@@ -257,7 +296,7 @@ public class Main {
 
 
         }
-        System.out.println("nombre de r�sultat deux points et le nombre de r�sultat"+i);
+        System.out.println("nombre de résultats: "+i);
     }
 
 }
