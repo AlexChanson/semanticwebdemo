@@ -1,6 +1,5 @@
-import org.apache.jena.ontology.OntDocumentManager;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.ontology.*;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
@@ -103,15 +102,32 @@ public class Main {
         prefixMapping = PrefixMapping.Factory.create();
 
         prefixMapping.setNsPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        prefixMapping.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
 
         prefixMapping.setNsPrefix("blt", "http://www.bl.uk/schemas/bibliographic/blterms#");
         prefixMapping.setNsPrefix("bibo", "http://purl.org/ontology/bibo/");
         prefixMapping.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
 
+        prefixMapping.getNsPrefixMap().forEach((k,v) -> System.out.println(k + ": "+ v));
+
+
     }
 
     public static void addTriplets() {
+
+        OntClass ontClass = bibo.createClass("http://monOntologie/AudioBook");
+        ontClass.addSuperClass(bibo.getOntResource("http://purl.org/ontology/bibo/Book"));
+
+        ontClass.setLabel("Audio Book", "EN");
+        ontClass.setLabel("Livre Audio", "FR");
+
+        DatatypeProperty propertyLength = bibo.createDatatypeProperty("http://monOntologie/audioLength");
+
+        //ontClass.addProperty(propertyLength);
+
+
     }
+
 
     public static void sparqlQueryDemo() {
         String queryString = "PREFIX owl: <http://purl.org/NET/c4dm/event.owl#>"
@@ -135,43 +151,11 @@ public class Main {
 
         System.out.println("New\n");
 
-        prefixMapping.getNsPrefixMap().forEach((k,v) -> System.out.println(k + ": "+ v));
 
         queryString = "select distinct ?c where {?x rdf:type ?c}";
 
-        ParameterizedSparqlString sparqlString = new ParameterizedSparqlString(queryString, prefixMapping);
 
-        query = sparqlString.asQuery();
-
-
-        try (QueryExecution queryExecution = QueryExecutionFactory.create(query, infered)) {
-            for (QuerySolution sol : execSelect(queryExecution)) {
-                StringBuilder sb = new StringBuilder();
-
-                Iterator<String> it = sol.varNames();
-
-                while (it.hasNext()) {
-                    String var = it.next();
-
-                    sb.append(var);
-                    sb.append(": ");
-                    sb.append(sol.get(var).toString());
-                    sb.append(" ,");
-
-                }
-
-                System.out.println(sb.toString());
-
-            }
-
-
-        }
-
-
-
-
-
-
+        sparql_query(queryString, infered);
 
     }
 
@@ -179,7 +163,6 @@ public class Main {
 
 
         // écrire le résultat en Turtle
-
         try {
             File out = new File(path);
             FileOutputStream fos = new FileOutputStream(out);
@@ -229,6 +212,38 @@ public class Main {
                 return resultSet;
             }
         };
+    }
+
+
+    public static void sparql_query(String queryString, Model model) {
+
+        ParameterizedSparqlString sparqlString = new ParameterizedSparqlString(queryString, prefixMapping);
+
+        Query query = sparqlString.asQuery();
+
+
+        try (QueryExecution queryExecution = QueryExecutionFactory.create(query, model)) {
+            for (QuerySolution sol : execSelect(queryExecution)) {
+                StringBuilder sb = new StringBuilder();
+
+                Iterator<String> it = sol.varNames();
+
+                while (it.hasNext()) {
+                    String var = it.next();
+
+                    sb.append(var);
+                    sb.append(": ");
+                    sb.append(sol.get(var).toString());
+                    sb.append(" ,");
+
+                }
+
+                System.out.println(sb.toString());
+
+            }
+
+
+        }
     }
 
 }
