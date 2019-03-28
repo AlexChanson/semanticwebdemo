@@ -14,6 +14,7 @@ import org.apache.jena.vocabulary.XSD;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.Scanner;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
@@ -99,7 +100,7 @@ public class Main {
         //reasoner = ReasonerRegistry.getRDFSSimpleReasoner();
         //reasoner = ReasonerRegistry.getOWLMiniReasoner();
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
-        reasoner = reasoner.bindSchema(blterms.union(foaf));
+        reasoner = reasoner.bindSchema(blterms.union(foaf).union(bibo));
         infered = ModelFactory.createInfModel(reasoner, data);
     }
 
@@ -108,6 +109,7 @@ public class Main {
 
         prefixMapping.setNsPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         prefixMapping.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
+        prefixMapping.setNsPrefix("event", "http://purl.org/NET/c4dm/event.owl#");
 
         prefixMapping.setNsPrefix("blt", "http://www.bl.uk/schemas/bibliographic/blterms#");
         prefixMapping.setNsPrefix("bibo", "http://purl.org/ontology/bibo/");
@@ -142,24 +144,16 @@ public class Main {
 
 
     public static void sparqlQueryDemo() {
-        String queryString = "PREFIX owl: <http://purl.org/NET/c4dm/event.owl#>"
-        		+ "PREFIX bl: <http://www.bl.uk/schemas/bibliographic/blterms#>"
-        		+ " select distinct ?x ?y where {?x ?y owl:Event} " ;
-        Query query = QueryFactory.create(queryString) ;
-        int c = 0;
-        try (QueryExecution qexec = QueryExecutionFactory.create(query, infered)) {
-            ResultSet results = qexec.execSelect() ;
-            for ( int i = 0; results.hasNext() && (i < Integer.MAX_VALUE); ++i)
-            {
-                QuerySolution soln = results.nextSolution() ;
-                RDFNode x = soln.get("x") ;       // Get a result variable by name.
-                Resource r = soln.getResource("y") ; // Get a result variable - must be a resource
-                Literal l = soln.getLiteral("z") ;   // Get a result variable - must be a literal
-                System.out.printf("%s   |   %s   |   %s%n",x,r,l);
-                c++;
-            }
-        }
-        System.out.println(c);
+    	Scanner sc = new Scanner(System.in);
+    	System.out.println("Appuyezsurenrt�epourcontinuer");
+    	sc.nextLine();
+    	sparql_query("select distinct ?x ?y where {?x ?y event:Event}", data);
+    	System.out.println("Appuyezsurenrt�epourcontinuer");
+    	sc.nextLine();
+        sparql_query("select distinct ?x ?y where {?x ?y event:Event}", infered);
+        System.out.println("Appuyezsurenrt�epourcontinuer");
+        sc.nextLine();
+        sparql_query("select distinct ?c where {?x rdf:type ?c}", infered);
 
         System.out.println("New\n");
 
@@ -169,6 +163,7 @@ public class Main {
 
         System.out.println("\nSuperclasses de l'audio book");
         sparql_query("select ?x ?y ?z where { ?x ?y ?z . ?x mo:audioLength ?al } ", infered);
+
 
     }
 
@@ -236,15 +231,17 @@ public class Main {
         ParameterizedSparqlString sparqlString = new ParameterizedSparqlString(queryString, prefixMapping);
 
         Query query = sparqlString.asQuery();
-
-
+        System.out.println("--------------");
+        System.out.println(queryString);
+        int i = 0;
         try (QueryExecution queryExecution = QueryExecutionFactory.create(query, model)) {
-            for (QuerySolution sol : execSelect(queryExecution)) {
-                StringBuilder sb = new StringBuilder();
-
+        	for (QuerySolution sol : execSelect(queryExecution)) {
+        		StringBuilder sb = new StringBuilder();
+        		i++;
                 Iterator<String> it = sol.varNames();
 
                 while (it.hasNext()) {
+
                     String var = it.next();
 
                     sb.append(var);
@@ -260,6 +257,7 @@ public class Main {
 
 
         }
+        System.out.println("nombre de r�sultat deux points et le nombre de r�sultat"+i);
     }
 
 }
