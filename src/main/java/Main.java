@@ -1,3 +1,4 @@
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.impl.LiteralLabelFactory;
 import org.apache.jena.ontology.*;
 import org.apache.jena.query.*;
@@ -8,6 +9,8 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.FileManager;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.XSD;
 
 import java.io.*;
 import java.util.Iterator;
@@ -15,6 +18,8 @@ import java.util.Iterator;
 public class Main {
     static String ressourceFolder = "src/main/resources/";
     static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
+
+    static String ns = "http://monOntologie/";
 
     static Model data; // données de l'instance
 
@@ -108,6 +113,8 @@ public class Main {
         prefixMapping.setNsPrefix("bibo", "http://purl.org/ontology/bibo/");
         prefixMapping.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
 
+        prefixMapping.setNsPrefix("mo", ns);
+
         prefixMapping.getNsPrefixMap().forEach((k,v) -> System.out.println(k + ": "+ v));
 
 
@@ -115,16 +122,21 @@ public class Main {
 
     public static void addTriplets() {
 
-        OntClass ontClass = bibo.createClass("http://monOntologie/AudioBook");
+
+
+        OntClass ontClass = bibo.createClass(ns+"AudioBook");
         ontClass.addSuperClass(bibo.getOntResource("http://purl.org/ontology/bibo/Book"));
 
         ontClass.setLabel("Audio Book", "EN");
         ontClass.setLabel("Livre Audio", "FR");
 
-        DatatypeProperty propertyLength = bibo.createDatatypeProperty("http://monOntologie/audioLength");
+        DatatypeProperty propertyLength = bibo.createDatatypeProperty(ns+"audioLength");
+        propertyLength.addDomain(ontClass);
+        propertyLength.addDomain(XSD.duration);
 
-        //ontClass.addProperty(propertyLength);
-
+        Resource audioBook1 = data.createResource(ns+"audioBook1")
+                .addProperty(RDF.type, ontClass)
+                .addProperty(propertyLength, "1002s", XSDDatatype.XSDduration);
 
     }
 
@@ -152,10 +164,11 @@ public class Main {
         System.out.println("New\n");
 
 
-        queryString = "select distinct ?c where {?x rdf:type ?c}";
+        System.out.println("\nChercher les audio books");
+        sparql_query("select ?x ?y ?z where { ?x rdf:type mo:AudioBook . ?x ?y ?z }", infered);
 
-
-        sparql_query(queryString, infered);
+        System.out.println("\nSuperclasses de l'audio book");
+        sparql_query("select ?x ?y ?z where { ?x ?y ?z . ?x mo:audioLength ?al } ", infered);
 
     }
 
@@ -194,9 +207,12 @@ public class Main {
 
         loadFileJavaDemo();
         loadFileDocumentManagerDemo();
+        addTriplets();
+
         createInferenceModelDemo();
         setupPrefixesDemo();
-        addTriplets();
+
+
         sparqlQueryDemo();
         //writeModelSemanticWebFormat(ressourceFolder + "inf.ttl", infered);
         //writeModelClassicFormat(ressourceFolder + "inf.json", infered);
@@ -234,7 +250,7 @@ public class Main {
                     sb.append(var);
                     sb.append(": ");
                     sb.append(sol.get(var).toString());
-                    sb.append(" ,");
+                    sb.append(", ");
 
                 }
 
