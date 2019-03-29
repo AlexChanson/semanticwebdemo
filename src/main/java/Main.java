@@ -1,6 +1,4 @@
-import org.apache.jena.base.Sys;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.graph.impl.LiteralLabelFactory;
 import org.apache.jena.ontology.*;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
@@ -21,13 +19,13 @@ public class Main {
     static String ressourceFolder = "src/main/resources/";
     static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
 
-    static String ns = "http://monOntologie/";
+    static String ns = "http://monOntologie/"; // notre ontologie
 
     static Model data; // données de l'instance
 
-    static OntModel bibo;
+    static OntModel bibo; // ontologie des données bibliographiques
 
-    static Model fullSchema;
+    static Model fullSchema; // fusion des ontologies
     
     static Model infered; // objet instance faisant les inférences souhaitées
 
@@ -86,8 +84,10 @@ public class Main {
         // Initialisation du modèle de graphe de l'instance
         data = ModelFactory.createDefaultModel();
 
-        // Création d'un InputStream de Java pour lire le fichier RDF de la British National Library
-        InputStream in = new FileInputStream(new File(ressourceFolder + "BNBLODB_sample.rdf"));
+        // Création d'un InputStream de Java pour lire
+        // le fichier RDF de la British National Library
+        InputStream in = new FileInputStream(
+                new File(ressourceFolder + "BNBLODB_sample.rdf"));
 
         // Charge le modèle depuis le flux
         data.read(in, "RDF/XML");
@@ -104,7 +104,9 @@ public class Main {
 
         // chargement d'un Modèle en passant par le FileManager
 
-        blterms = FileManager.get().loadModel("file:" + ressourceFolder + "blterms.owl");
+        blterms = FileManager.get().loadModel(
+                "file:" + ressourceFolder + "blterms.owl");
+
         in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
         blterms.read(in, "OWL/XML");
 
@@ -143,8 +145,11 @@ public class Main {
 
     public static void createInferenceModelDemo() {
 
-        //reasoner = ReasonerRegistry.getOWLReasoner();          // calcule toutes les inférences OWL possibles
-        reasoner = ReasonerRegistry.getTransitiveReasoner(); // calcule les inférences transitives simples
+        // calcule toutes les inférences OWL possibles
+        //reasoner = ReasonerRegistry.getOWLReasoner();
+
+        // calcule les inférences transitives simples
+        reasoner = ReasonerRegistry.getTransitiveReasoner();
 
         // autres raisonneurs possibles:
         //reasoner = ReasonerRegistry.getRDFSReasoner();
@@ -205,7 +210,8 @@ public class Main {
 
         System.out.println("\nRécupération des 100 premiers titres de livres");
         block_enter();
-        sparql_query("select distinct ?title where { ?x rdf:type bibo:Book . ?x dct:title ?title  } limit 100", infered);
+        sparql_query("select distinct ?title where " +
+                "{ ?x rdf:type bibo:Book . ?x dct:title ?title  } limit 100", infered);
 
         System.out.println("\nRécupération des évènements sans inférences");
         block_enter();
@@ -217,11 +223,13 @@ public class Main {
 
         System.out.println("\nChercher les audio books");
         block_enter();
-        sparql_query("select ?x ?y ?z where { ?x rdf:type mo:AudioBook . ?x ?y ?z }", infered);
+        sparql_query("select ?x ?y ?z " +
+                "where { ?x rdf:type mo:AudioBook . ?x ?y ?z }", infered);
 
         System.out.println("\nSuperclasses de l'audio book");
         block_enter();
-        sparql_query("select distinct ?x where { mo:audioBook1 rdf:type ?y . ?y rdfs:subClassOf ?x } ", infered);
+        sparql_query("select distinct ?x " +
+                "where { mo:audioBook1 rdf:type ?y . ?y rdfs:subClassOf ?x } ", infered);
 
     }
 
@@ -274,7 +282,8 @@ public class Main {
 
     public static void sparql_query(String queryString, Model model) {
 
-        ParameterizedSparqlString sparqlString = new ParameterizedSparqlString(queryString, prefixMapping);
+        ParameterizedSparqlString sparqlString =
+                new ParameterizedSparqlString(queryString, prefixMapping);
 
         Query query = sparqlString.asQuery();
         System.out.println("--------------");
