@@ -1,0 +1,380 @@
+<?xml version="1.0"?>
+<Ontology xmlns="http://www.w3.org/2002/07/owl#"
+     xml:base="http://www.alexscode.com/ontologies/bdmamusic"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     ontologyIRI="http://www.alexscode.com/ontologies/bdmamusic">
+    <Prefix name="" IRI="http://www.alexscode.com/ontologies/bdmamusic"/>
+    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
+    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
+    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
+    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
+    <Import>http://dbpedia.org/ontology/person</Import>
+    <Import>http://purl.org/ontology/mo/</Import>
+    <Annotation>
+        <AnnotationProperty abbreviatedIRI="rdfs:comment"/>
+        <Literal>Music ontology for the bdma BI Project.</Literal>
+    </Annotation>
+    <Declaration>
+        <Class IRI="http://dbpedia.org/ontology/Person"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Acousticness"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Album"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#AlbumID"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Artist"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#ArtistID"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#AudioFeature"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Danceability"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Duration"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Energy"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Feature"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Instrumentalness"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Key"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Liveness"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Loudness"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Mode"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Person"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Playlist"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Popularity"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Single"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Song"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Speechiness"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#SpotifyAlbum"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#SpotifyArtist"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#SpotifyID"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#SpotifyTrack"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Tag"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Tempo"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#TimeSignature"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Track"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#TrackID"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#User"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="#Valence"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasFeature"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasID"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasPerformed"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasTag"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#hasTrack"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isCreatedBy"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isInAlbum"/>
+    </Declaration>
+    <Declaration>
+        <ObjectProperty IRI="#isPerformedBy"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty IRI="#hasCount"/>
+    </Declaration>
+    <EquivalentClasses>
+        <Class IRI="http://dbpedia.org/ontology/Person"/>
+        <Class IRI="#Person"/>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="http://purl.org/NET/c4dm/keys.owl#Key"/>
+        <Class IRI="#Instrumentalness"/>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="http://purl.org/ontology/mo/MusicalWork"/>
+        <Class IRI="#Song"/>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="http://purl.org/ontology/mo/Track"/>
+        <Class IRI="#SpotifyTrack"/>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#SpotifyAlbum"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Album"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="#hasID"/>
+                <Class IRI="#AlbumID"/>
+            </ObjectSomeValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#SpotifyArtist"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Artist"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="#hasID"/>
+                <Class IRI="#ArtistID"/>
+            </ObjectSomeValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#SpotifyTrack"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Track"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="#hasID"/>
+                <Class IRI="#TrackID"/>
+            </ObjectSomeValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <EquivalentClasses>
+        <Class IRI="#Track"/>
+        <ObjectIntersectionOf>
+            <Class IRI="#Song"/>
+            <ObjectSomeValuesFrom>
+                <ObjectProperty IRI="#isPerformedBy"/>
+                <Class IRI="#Artist"/>
+            </ObjectSomeValuesFrom>
+        </ObjectIntersectionOf>
+    </EquivalentClasses>
+    <SubClassOf>
+        <Class IRI="#Acousticness"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#AlbumID"/>
+        <Class IRI="#SpotifyID"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#ArtistID"/>
+        <Class IRI="#SpotifyID"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#AudioFeature"/>
+        <Class IRI="#Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Danceability"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Duration"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Energy"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Instrumentalness"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Key"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Liveness"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Loudness"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Mode"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Popularity"/>
+        <Class IRI="#Feature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Single"/>
+        <Class IRI="#Album"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Speechiness"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Tempo"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#TimeSignature"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#TrackID"/>
+        <Class IRI="#SpotifyID"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#User"/>
+        <Class IRI="#Person"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="#Valence"/>
+        <Class IRI="#AudioFeature"/>
+    </SubClassOf>
+    <DisjointClasses>
+        <Class IRI="#Acousticness"/>
+        <Class IRI="#Danceability"/>
+        <Class IRI="#Duration"/>
+        <Class IRI="#Energy"/>
+        <Class IRI="#Instrumentalness"/>
+        <Class IRI="#Key"/>
+        <Class IRI="#Liveness"/>
+        <Class IRI="#Loudness"/>
+        <Class IRI="#Mode"/>
+        <Class IRI="#Speechiness"/>
+        <Class IRI="#Tempo"/>
+        <Class IRI="#TimeSignature"/>
+        <Class IRI="#Valence"/>
+    </DisjointClasses>
+    <DisjointClasses>
+        <Class IRI="#AlbumID"/>
+        <Class IRI="#ArtistID"/>
+        <Class IRI="#TrackID"/>
+    </DisjointClasses>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasFeature"/>
+        <ObjectProperty abbreviatedIRI="owl:topObjectProperty"/>
+    </SubObjectPropertyOf>
+    <SubObjectPropertyOf>
+        <ObjectProperty IRI="#hasPerformed"/>
+        <ObjectProperty abbreviatedIRI="owl:topObjectProperty"/>
+    </SubObjectPropertyOf>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#hasPerformed"/>
+        <ObjectProperty IRI="#isPerformedBy"/>
+    </InverseObjectProperties>
+    <InverseObjectProperties>
+        <ObjectProperty IRI="#hasTrack"/>
+        <ObjectProperty IRI="#isInAlbum"/>
+    </InverseObjectProperties>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasFeature"/>
+        <Class IRI="#Track"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasID"/>
+        <Class IRI="#Album"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasID"/>
+        <Class IRI="#Artist"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasID"/>
+        <Class IRI="#Track"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasPerformed"/>
+        <Class IRI="#Artist"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#hasTag"/>
+        <Class IRI="#Track"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#isCreatedBy"/>
+        <Class IRI="#Playlist"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyDomain>
+        <ObjectProperty IRI="#isPerformedBy"/>
+        <Class IRI="#Song"/>
+    </ObjectPropertyDomain>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasFeature"/>
+        <Class IRI="#Feature"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasID"/>
+        <Class IRI="#SpotifyID"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasPerformed"/>
+        <Class IRI="#Song"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#hasTag"/>
+        <Class IRI="#Tag"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isCreatedBy"/>
+        <Class IRI="#User"/>
+    </ObjectPropertyRange>
+    <ObjectPropertyRange>
+        <ObjectProperty IRI="#isPerformedBy"/>
+        <Class IRI="#Artist"/>
+    </ObjectPropertyRange>
+</Ontology>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

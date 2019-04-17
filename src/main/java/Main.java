@@ -17,19 +17,18 @@ import java.util.Scanner;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
-    static Model RDFS = ModelFactory.createRDFSModel(ModelFactory.createDefaultModel());
 
     static String ns = "http://monOntologie/"; // notre ontologie
 
     static Model data; // données de l'instance
 
-    static OntModel bibo; // ontologie des données bibliographiques
+    static OntModel triples; // ontologie des données bibliographiques
 
     static Model fullSchema; // fusion des ontologies
     
     static Model infered; // objet instance faisant les inférences souhaitées
 
-    static Model blterms; // schéma principal
+    static Model music_bi; // schéma principal
 
     static OntModel foaf; // schéma FOAF
 
@@ -47,9 +46,9 @@ public class Main {
         block_enter();
         loadFileDocumentManagerDemo();
 
-        System.out.println("\nCréation d'une classe et d'un individu");
-        block_enter();
-        addTriplets();
+        //System.out.println("\nCréation d'une classe et d'un individu");
+        //block_enter();
+        //addTriplets();
 
         System.out.println("\nCréation du modèle d'inférence");
         block_enter();
@@ -62,7 +61,7 @@ public class Main {
 
         System.out.println("\nRequêtage de l'instance");
         sparqlQueryDemo();
-
+        /*
         // écrire l'instance
         System.out.println("\nÉcriture de l'instance au format Turtle");
         block_enter();
@@ -76,7 +75,7 @@ public class Main {
         System.out.println("\nÉcriture du nouveau schéma");
         block_enter();
         writeModelSemanticWebFormat(ressourceFolder+"nouveau_schema.ttl", fullSchema);
-
+		*/
     }
 
     public static void loadFileJavaDemo() throws FileNotFoundException {
@@ -99,43 +98,43 @@ public class Main {
         // chargement d'un OntModel depuis un fichier
 
         foaf = ModelFactory.createOntologyModel();
-        InputStream in = new FileInputStream(new File(ressourceFolder + "foaf.rdf"));
-        foaf.read(in, "RDF/XML");
+        InputStream in = new FileInputStream(new File(ressourceFolder + "music_bi.owl"));
+        foaf.read(in, "TURTLE");
 
         // chargement d'un Modèle en passant par le FileManager
 
-        blterms = FileManager.get().loadModel(
-                "file:" + ressourceFolder + "blterms.owl");
+        music_bi = FileManager.get().loadModel(
+                "file:" + ressourceFolder + "music_bi.owl");
 
-        in = new FileInputStream(new File(ressourceFolder + "blterms.owl"));
-        blterms.read(in, "OWL/XML");
+        in = new FileInputStream(new File(ressourceFolder + "music_bi.owl"));
+        music_bi.read(in, "OWL/XML");
 
         // chargement d'un OntModel depuis le OntDocumentManager
         
         OntDocumentManager ontDocumentManager = OntDocumentManager.getInstance();
     	OntModelSpec modelSpec_bibo = new OntModelSpec( OntModelSpec.OWL_MEM_TRANS_INF );
 
-    	bibo = ModelFactory.createOntologyModel();
-    	bibo.read("file:" + ressourceFolder + "bibo.rdf", "RDF/XML");
+    	triples = ModelFactory.createOntologyModel();
+    	triples.read("file:" + ressourceFolder + "triples.rdf", "RDF/XML");
 
-    	ontDocumentManager.addModel("test", bibo);
+    	ontDocumentManager.addModel("test", triples);
 
-    	bibo = ontDocumentManager.getOntology("test2", modelSpec_bibo);
-
+    	triples = ontDocumentManager.getOntology("test2", modelSpec_bibo);
+    	/*
     	System.out.println("\nChargement via le OntDocumentManager\n\n Avec la mauvaise URI");
     	block_enter();
 
         System.out.println("\n");
     	System.out.println("Incorrectement chargé:");
-    	System.out.println(bibo);
+    	System.out.println(triples);
         System.out.println("\n");
-
+    	 */
         System.out.println("\nChargement avec le bon URI");
         block_enter();
 
-        bibo = ontDocumentManager.getOntology("test", modelSpec_bibo);
+        triples = ontDocumentManager.getOntology("test", modelSpec_bibo);
         System.out.println("Correctement chargé:");
-        System.out.println(bibo);
+        System.out.println(triples);
         System.out.println("\n");
 
 
@@ -158,7 +157,7 @@ public class Main {
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
 
 
-        fullSchema = blterms.union(foaf).union(bibo);
+        fullSchema = music_bi.union(triples);
 
         reasoner = reasoner.bindSchema(fullSchema);
         infered = ModelFactory.createInfModel(reasoner, data);
@@ -189,13 +188,13 @@ public class Main {
 
 
 
-        OntClass ontClass = bibo.createClass(ns+"AudioBook");
-        ontClass.addSuperClass(bibo.getOntResource("http://purl.org/ontology/bibo/Book"));
+        OntClass ontClass = triples.createClass(ns+"AudioBook");
+        ontClass.addSuperClass(triples.getOntResource("http://purl.org/ontology/bibo/Book"));
 
         ontClass.setLabel("Audio Book", "EN");
         ontClass.setLabel("Livre Audio", "FR");
 
-        DatatypeProperty propertyLength = bibo.createDatatypeProperty(ns+"audioLength");
+        DatatypeProperty propertyLength = triples.createDatatypeProperty(ns+"audioLength");
         propertyLength.addDomain(ontClass);
         propertyLength.addDomain(XSD.duration);
 
@@ -207,7 +206,10 @@ public class Main {
 
 
     public static void sparqlQueryDemo() {
-
+    	
+    	sparql_query("select distinct ?y where {?x ?y ?z}", infered);
+    	
+    	/*
         System.out.println("\nRécupération des 100 premiers titres de livres");
         block_enter();
         sparql_query("select distinct ?title where " +
@@ -230,6 +232,7 @@ public class Main {
         block_enter();
         sparql_query("select distinct ?x " +
                 "where { mo:audioBook1 rdf:type ?y . ?y rdfs:subClassOf ?x } ", infered);
+        */
 
     }
 
