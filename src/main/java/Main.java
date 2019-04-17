@@ -17,6 +17,8 @@ import java.util.Scanner;
 
 public class Main {
     static String ressourceFolder = "src/main/resources/";
+    
+    static Scanner sc = new Scanner(System.in);
 
     static String ns = "http://monOntologie/"; // notre ontologie
 
@@ -43,20 +45,20 @@ public class Main {
         loadFileJavaDemo();
 
         System.out.println("\nChargement des ontologies");
-        block_enter();
+        //block_enter();
         loadFileDocumentManagerDemo();
 
         //System.out.println("\nCréation d'une classe et d'un individu");
         //block_enter();
         //addTriplets();
 
-        System.out.println("\nCréation du modèle d'inférence");
-        block_enter();
+        //System.out.println("\nCréation du modèle d'inférence");
+        //block_enter();
         createInferenceModelDemo();
 
 
         System.out.println("\nFabrication des préfixes");
-        block_enter();
+        //block_enter();
         setupPrefixesDemo();
 
         System.out.println("\nRequêtage de l'instance");
@@ -99,14 +101,13 @@ public class Main {
 
         foaf = ModelFactory.createOntologyModel();
         InputStream in = new FileInputStream(new File(ressourceFolder + "music_bi.owl"));
-        foaf.read(in, "TURTLE");
+        //foaf.read(in, "OWL/XML");
 
         // chargement d'un Modèle en passant par le FileManager
 
-        music_bi = FileManager.get().loadModel(
-                "file:" + ressourceFolder + "music_bi.owl");
+        music_bi = FileManager.get().loadModel("file:" + ressourceFolder + "music_bi2.owl");
 
-        in = new FileInputStream(new File(ressourceFolder + "music_bi.owl"));
+        in = new FileInputStream(new File(ressourceFolder + "music_bi2.owl"));
         music_bi.read(in, "OWL/XML");
 
         // chargement d'un OntModel depuis le OntDocumentManager
@@ -115,7 +116,7 @@ public class Main {
     	OntModelSpec modelSpec_bibo = new OntModelSpec( OntModelSpec.OWL_MEM_TRANS_INF );
 
     	triples = ModelFactory.createOntologyModel();
-    	triples.read("file:" + ressourceFolder + "triples.rdf", "RDF/XML");
+    	triples.read("file:" + ressourceFolder + "triples.rdf", "TURTLE");
 
     	ontDocumentManager.addModel("test", triples);
 
@@ -134,7 +135,7 @@ public class Main {
 
         triples = ontDocumentManager.getOntology("test", modelSpec_bibo);
         System.out.println("Correctement chargé:");
-        System.out.println(triples);
+        //System.out.println(triples);
         System.out.println("\n");
 
 
@@ -171,10 +172,12 @@ public class Main {
         prefixMapping.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
         prefixMapping.setNsPrefix("event", "http://purl.org/NET/c4dm/event.owl#");
         prefixMapping.setNsPrefix("dct", "http://purl.org/dc/terms/");
-
+        	
+        
         prefixMapping.setNsPrefix("blt", "http://www.bl.uk/schemas/bibliographic/blterms#");
         prefixMapping.setNsPrefix("bibo", "http://purl.org/ontology/bibo/");
         prefixMapping.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
+        prefixMapping.setNsPrefix("bdma", "http://alexscode.com/ontologies/bdmamusic.");
 
         prefixMapping.setNsPrefix("mo", ns);
 
@@ -207,7 +210,16 @@ public class Main {
 
     public static void sparqlQueryDemo() {
     	
-    	sparql_query("select distinct ?y where {?x ?y ?z}", infered);
+    	sparql_query("select ?id ?value where {?id bdma:owlhasFeature ?feature . FILTER regex(str(?feature), \".*/popularity\") . ?feature bdma:owlfeatureValue ?value . FILTER (?value > 90)}"
+    			, infered);
+    	
+    	while(true) {
+    		System.out.println("go");
+    		try {
+    		sparql_query(sc.nextLine(), triples);
+    		}
+    		catch(Exception e) {}
+    	}
     	
     	/*
         System.out.println("\nRécupération des 100 premiers titres de livres");
@@ -278,7 +290,7 @@ public class Main {
 
 
     public static void block_enter() {
-        Scanner sc = new Scanner(System.in);
+        
         System.out.println("\nAppuyez sur entrée pour continuer...");
         sc.nextLine();
     }
