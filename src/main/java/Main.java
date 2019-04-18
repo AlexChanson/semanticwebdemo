@@ -158,10 +158,10 @@ public class Main {
         //reasoner = ReasonerRegistry.getOWLMicroReasoner();
 
 
-        fullSchema = music_bi.union(triples);
+        fullSchema = music_bi;
 
         reasoner = reasoner.bindSchema(fullSchema);
-        infered = ModelFactory.createInfModel(reasoner, data);
+        infered = ModelFactory.createInfModel(reasoner, triples);
     }
 
     public static void setupPrefixesDemo() {
@@ -178,6 +178,7 @@ public class Main {
         prefixMapping.setNsPrefix("bibo", "http://purl.org/ontology/bibo/");
         prefixMapping.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
         prefixMapping.setNsPrefix("bdma", "http://alexscode.com/ontologies/bdmamusic.");
+        prefixMapping.setNsPrefix("bdma2", "http://alexscode.com/ontologies/bdmamusic#");
 
         prefixMapping.setNsPrefix("mo", ns);
 
@@ -210,13 +211,12 @@ public class Main {
 
     public static void sparqlQueryDemo() {
     	
-    	sparql_query("select ?id ?value where {?id bdma:owlhasFeature ?feature . FILTER regex(str(?feature), \".*/popularity\") . ?feature bdma:owlfeatureValue ?value . FILTER (?value > 90)}"
-    			, infered);
-    	
+    	//sparql_query("select ?id ?value where {?id bdma:owlhasFeature ?feature . FILTER regex(str(?feature), \".*/popularity\") . ?feature bdma:owlfeatureValue ?value . FILTER (?value > 90)}", infered);
+    	//sparql_query("select ?id ?value where {?id bdma:owlhasFeature ?feature . ?feature rdf:type bdma2:Popularity . ?feature bdma:owlfeatureValue ?value . FILTER (?value > 90)}", infered);
     	while(true) {
     		System.out.println("go");
     		try {
-    		sparql_query(sc.nextLine(), triples);
+    		sparql_query(sc.nextLine(), infered);
     		}
     		catch(Exception e) {}
     	}
